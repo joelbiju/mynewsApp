@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:myapp/screens/homescreen.dart';
 import 'package:myapp/screens/profile_screen.dart';
+import 'package:myapp/screens/signup_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
       designSize: const Size(423, 845),
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
-          home: ProfileScreen(),
+          home: SignupScreen(),
           //home: MyHome(),
         ),
     );
