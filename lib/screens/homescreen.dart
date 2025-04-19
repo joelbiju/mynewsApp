@@ -17,10 +17,17 @@ class _HomescreenState extends State<Homescreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      floatingActionButton: FloatingActionButton(
+        onPressed: (){},
+        backgroundColor: UIColor.primaryColor,
+        foregroundColor: UIColor.textWhite,
+        child: Icon(Icons.add),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           physics: BouncingScrollPhysics(),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
                 padding: EdgeInsets.all(12.h),
@@ -59,12 +66,15 @@ class _HomescreenState extends State<Homescreen> {
                             );
                           },
                           child: CircleAvatar(
-                            radius: 20.w,
+                            radius: 22.w,
                             backgroundImage: AssetImage('assets/Woman_5.png'),
                           ),
                         ),
                       ],
                     ),
+
+                    SizedBox(height: 6.h,),
+                    
 
                     Text(
                       "Headlines",
@@ -74,28 +84,37 @@ class _HomescreenState extends State<Homescreen> {
                         color: UIColor.textPrimary,
                       ),
                     ),
+                    
                   ],
                 ),
               ),
 
               SimpleCarousel(),
               SizedBox(height: 20.h,),
-
-
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                      "News in Detail",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                        color: UIColor.textPrimary,
-                      ),
+              
+              Padding(
+                padding: EdgeInsets.all(12.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Divider(
+                      color: UIColor.textPrimary,
+                      thickness: 0.5,
                     ),
+                    Text(
+                        "News in Detail",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                          color: UIColor.textPrimary,
+                        ),
+                      ),
 
-                  DummyList(),
-                ],
+                      SizedBox(height: 6.h,),
+
+                      DummyList(),
+                  ],
+                ),
               ),
 
             ],

@@ -1,6 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:myapp/screens/homescreen.dart';
+import 'package:myapp/screens/signup_screen.dart';
 import 'package:myapp/util/colors.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -169,7 +171,14 @@ class _LoginScreenState extends State<LoginScreen> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          onPressed: (){}, 
+                          onPressed: (){
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Homescreen(),
+                              ),
+                            );
+                          }, 
                           child: Text(
                             "Login",
                             style: TextStyle(
@@ -200,10 +209,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () {
-                                    // Navigator.push(
-                                    //     context,
-                                    //     MaterialPageRoute(
-                                    //         builder: (context) => SignUp()));
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => SignupScreen()));
                                   },
                               ),
                             ],

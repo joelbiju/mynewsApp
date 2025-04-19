@@ -6,51 +6,52 @@ class DummyList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Dummy data list
-    final List<Map<String, String>> items = List.generate(
-      10,
-      (index) => {
-        'title': 'Item Title ${index + 1}',
-        'description': 'This is the description for item ${index + 1}.',
-      },
-    );
-
     return ListView.builder(
-      padding: EdgeInsets.all(12.w),
-      physics: BouncingScrollPhysics(),
-      itemCount: items.length,
+      itemCount: 5,
+      padding: EdgeInsets.symmetric(vertical: 10.h),
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         return Padding(
-          padding: EdgeInsets.only(bottom: 12.h),
+          padding: EdgeInsets.symmetric( vertical: 8.h),
           child: Container(
             padding: EdgeInsets.all(16.w),
             decoration: BoxDecoration(
-              color: Colors.grey[200],
+              color: Colors.blue[100 * ((index % 8) + 1)],
               borderRadius: BorderRadius.circular(12.r),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black12,
                   blurRadius: 4,
                   offset: Offset(0, 2),
-                )
+                ),
               ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  items[index]['title']!,
+                  'News Headline ${index + 1}',
                   style: TextStyle(
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
                   ),
                 ),
-                SizedBox(height: 8.h),
+                SizedBox(height: 6.h),
                 Text(
-                  items[index]['description']!,
+                  'April ${19 + index}, 2025',
                   style: TextStyle(
                     fontSize: 14.sp,
-                    color: Colors.grey[700],
+                    color: Colors.black54,
+                  ),
+                ),
+                SizedBox(height: 10.h),
+                Text(
+                  'This is a dummy description for news item number ${index + 1}. It provides a short preview of what the news is about.',
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    color: Colors.black87,
                   ),
                 ),
               ],

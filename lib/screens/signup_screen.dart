@@ -2,6 +2,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:myapp/screens/homescreen.dart';
+import 'package:myapp/screens/login_screen.dart';
 import 'package:myapp/util/colors.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -264,12 +266,12 @@ class _SignupScreenState extends State<SignupScreen> {
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () {
                                     //route to login page
-                                    // Navigator.push(
-                                    //     context,
-                                    //     MaterialPageRoute(
-                                    //         builder: (context) => LoginView(),
-                                    //     ),
-                                    //   );
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => LoginScreen(),
+                                        ),
+                                      );
                                   },
                               ),
                             ],
@@ -288,7 +290,14 @@ class _SignupScreenState extends State<SignupScreen> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        onPressed: (){}, 
+                        onPressed: (){
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Homescreen(),
+                              ),
+                            );
+                        }, 
                         child: Text(
                           "Sign Up",
                           style: TextStyle(
