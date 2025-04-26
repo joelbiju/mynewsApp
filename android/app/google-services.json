@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "456182757836",
+    "project_id": "localspotlight-69dc8",
+    "storage_bucket": "localspotlight-69dc8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:456182757836:android:6304073b346690af684569",
+        "android_client_info": {
+          "package_name": "com.example.myapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_5jZ85udnEDUvzkUsBNQYkDk9u7Vn0Xs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
