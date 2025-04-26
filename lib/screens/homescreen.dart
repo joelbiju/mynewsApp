@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:myapp/components/carousel.dart';
 import 'package:myapp/components/dummy_list.dart';
+import 'package:myapp/screens/create_news_screen.dart';
 import 'package:myapp/screens/profile_screen.dart';
 import 'package:myapp/util/colors.dart';
 
@@ -18,7 +19,14 @@ class _HomescreenState extends State<Homescreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       floatingActionButton: FloatingActionButton(
-        onPressed: (){},
+        onPressed: (){
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CreateNewsScreen(),
+            ),
+          );
+        },
         backgroundColor: UIColor.primaryColor,
         foregroundColor: UIColor.textWhite,
         child: Icon(Icons.add),
