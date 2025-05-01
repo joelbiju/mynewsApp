@@ -26,6 +26,15 @@ class _CreateNewsScreenState extends State<CreateNewsScreen> {
     'Environmental',
   ];
 
+  final Map<String, String> _categoryImages = {
+  'Construction': 'assets/categories/road_construction.jpg',
+  'Damage': 'assets/categories/alert.jpg',
+  'Road Block': 'assets/categories/road_closed.jpg',
+  'Flood': 'assets/categories/flood_alert.jpg',
+  'Environmental': 'assets/categories/environmental_alert.jpg',
+};
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +71,7 @@ class _CreateNewsScreenState extends State<CreateNewsScreen> {
                       Text(
                         "News In Your Neighborhood",
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 20,
                           fontWeight: FontWeight.w500,
                           color: UIColor.textPrimary,
                         ),
@@ -96,7 +105,7 @@ class _CreateNewsScreenState extends State<CreateNewsScreen> {
                           value == null || value.isEmpty ? 'Title is required' : null,
                       ),
             
-                      SizedBox(height: 12.h),
+                      SizedBox(height: 16.h),
                       TextFormField(
                         controller: _descriptionController,
                         decoration: InputDecoration(
@@ -108,7 +117,7 @@ class _CreateNewsScreenState extends State<CreateNewsScreen> {
                                   color: UIColor.shade,
                                 ),
                               ),
-                              label: Text('Title'),
+                              label: Text('Description'),
                               labelStyle: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w400,
@@ -125,7 +134,7 @@ class _CreateNewsScreenState extends State<CreateNewsScreen> {
                             value == null || value.isEmpty ? 'Description is required' : null,
                       ),
                       
-                      SizedBox(height: 12.h),
+                      SizedBox(height: 16.h),
                       DropdownButtonFormField<String>(
                         value: _selectedCategory,
                         hint: Text('Select Category'),
@@ -159,7 +168,7 @@ class _CreateNewsScreenState extends State<CreateNewsScreen> {
                             value == null ? 'Category is required' : null,
                       ),
 
-                      SizedBox(height: 12.h),
+                      SizedBox(height: 16.h),
                       TextFormField(
                         controller: _locationController,
                         decoration: InputDecoration(
@@ -188,16 +197,41 @@ class _CreateNewsScreenState extends State<CreateNewsScreen> {
                       ),
 
 
-                      SizedBox(height: 16.h),
-                      // Text('Add Media (Optional)', style: TextStyle(fontSize: 16)),
-                      //   SizedBox(height: 8),
-                      //   Container(
-                      //     height: 150,
-                      //     color: Colors.grey[300],
-                      //     child: Center(
-                      //       child: Text('Tap to add image (not implemented)'),
-                      //     ),
-                      //   ),
+                      SizedBox(height: 18.h),
+                      Text('Media (default)', style: TextStyle(fontSize: 16)),
+                        SizedBox(height: 8),
+                        GestureDetector(
+                          onTap: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('This field is not editable'),
+                                behavior: SnackBarBehavior.floating,
+                              ),
+                            );
+                          },
+                          child: Container(
+                            height: 150.h,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[300],
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: _selectedCategory != null && _categoryImages[_selectedCategory!] != null
+                                ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Image.asset(
+                                      _categoryImages[_selectedCategory!]!,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )
+                                : Center(
+                                    child: Text(
+                                      '(Please choose category first)',
+                                      style: TextStyle(color: Colors.black54),
+                                    ),
+                                  ),
+                          ),
+                        ),
                     ],
                   ),
                 ),
@@ -210,7 +244,7 @@ class _CreateNewsScreenState extends State<CreateNewsScreen> {
                   child: TextButton(
                   style: TextButton.styleFrom(
                     backgroundColor: UIColor.primaryColor, // button background    // text color
-                    padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 24.w),
+                    padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 26.w),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),

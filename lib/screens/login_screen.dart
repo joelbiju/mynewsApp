@@ -172,7 +172,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           : TextButton(
                               style: TextButton.styleFrom(
                                 backgroundColor: UIColor.primaryColor,
-                                padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 24.w),
+                                padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 26.w),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
