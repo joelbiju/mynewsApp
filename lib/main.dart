@@ -19,7 +19,6 @@ class MyApp extends StatelessWidget {
       designSize: const Size(423, 845),
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
-          //home: CreateNewsScreen(),
           home: SignupScreen(),
         ),
     );
