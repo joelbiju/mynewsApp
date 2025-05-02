@@ -1,0 +1,2 @@
+C:/Users/Joel Biju/Desktop/Flutter/mynewsApp/android/app/.cxx/RelWithDebInfo/2y6i6g5t/x86/CMakeFiles/edit_cache.dir
+C:/Users/Joel Biju/Desktop/Flutter/mynewsApp/android/app/.cxx/RelWithDebInfo/2y6i6g5t/x86/CMakeFiles/rebuild_cache.dir
