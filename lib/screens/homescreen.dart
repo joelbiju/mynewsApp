@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:geocoding/geocoding.dart';
+import 'package:intl/intl.dart';
 import 'package:myapp/components/carousel.dart';
-import 'package:myapp/components/dummy_list.dart';
+import 'package:myapp/components/news_card.dart';
+import 'package:myapp/models/news_model.dart';
 import 'package:myapp/models/location_service.dart';
 import 'package:myapp/screens/create_news_screen.dart';
 import 'package:myapp/screens/profile_screen.dart';
+import 'package:myapp/services/news_service.dart';
 import 'package:myapp/util/colors.dart';
 
 class Homescreen extends StatefulWidget {
@@ -18,20 +20,128 @@ class Homescreen extends StatefulWidget {
 
 class _HomescreenState extends State<Homescreen> {
   String currentAddress = "Loading location...";
+  List<NewsArticle> _newsList = [];
+  bool _isLoading = true;
+  double? latitude;
+  double? longitude;
 
   @override
   void initState() {
     super.initState();
-    _loadLocation();
+    _loadLocationAndNews();
   }
 
-  Future<void> _loadLocation() async {
+  Future<void> _loadLocationAndNews() async {
     String address = await LocationService.getCurrentAddress();
+
+    Position? pos = await LocationService.getCoordinates();
+    if (pos != null) {
+      latitude = pos.latitude;
+      longitude =  pos.longitude;
+      print("Latitude: ${pos.latitude}, Longitude: ${pos.longitude}");
+    }
+
+
     setState(() {
       currentAddress = address;
     });
+
+    try {
+      //String location = "9.225, 76.679,20"; // Replace with dynamic location if needed
+      String location = "$latitude, $longitude, 20";
+      String date = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: 7)));
+
+      final news = await NewsService.fetchNews(location: location, earliestDate: date);
+      setState(() {
+        _newsList = news;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      print('Error fetching news: $e');
+    }
   }
 
+  void _showNewsDetailsBottomSheet(String title, String date, String description, String imageUrl) {
+    showModalBottomSheet(
+      backgroundColor: Colors.grey[200],
+      context: context,
+      isScrollControlled: true, // Allow scrolling
+      builder: (BuildContext context) {
+        return SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
+          child: Padding(
+            padding: EdgeInsets.all(16.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Display image only if URL is valid and loadable
+              imageUrl.isNotEmpty
+                  ? Image.network(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: 200.h, // Adjust the height as needed
+                      loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                        if (loadingProgress == null) {
+                          // Image has loaded successfully
+                          return child;
+                        } else {
+                          // Show loading indicator while the image is loading
+                          return Center(
+                            child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.expectedTotalBytes != null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                          (loadingProgress.expectedTotalBytes ?? 1)
+                                      : null
+                                  : null,
+                            ),
+                          );
+                        }
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        // Skip the image entirely if there's an error loading it
+                        return SizedBox(); // No image, just an empty space
+                      },
+                    )
+                  : SizedBox(), // No image URL, skip image entirely
+              SizedBox(height: 10.h),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 24.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                SizedBox(height: 10.h),
+                Text(
+                  date,
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    color: Colors.black54,
+                  ),
+                ),
+                SizedBox(height: 10.h),
+                Divider(color: Colors.black54),
+                SizedBox(height: 10.h),
+                Text(
+                  description,
+                  style: TextStyle(
+                    fontSize: 18.sp,
+                    color: Colors.black87,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,10 +171,11 @@ class _HomescreenState extends State<Homescreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Header
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // Location
+                        // Location Display
                         Row(
                           children: [
                             Icon(
@@ -83,6 +194,7 @@ class _HomescreenState extends State<Homescreen> {
                             ),
                           ],
                         ),
+                        // Profile Button
                         GestureDetector(
                           onTap: () {
                             Navigator.push(
@@ -131,7 +243,25 @@ class _HomescreenState extends State<Homescreen> {
                       ),
                     ),
                     SizedBox(height: 6.h),
-                    DummyList(),
+                    _isLoading
+                        ? Center(child: CircularProgressIndicator())
+                        : Column(
+                            children: _newsList.map((article) {
+                              return NewsCard(
+                                headline: article.title,
+                                date: article.publishDate,
+                                description: article.summary,
+                                onTap: () {
+                                  _showNewsDetailsBottomSheet(
+                                    article.title,
+                                    article.publishDate,
+                                    article.text, // Use description here
+                                    article.image
+                                  );
+                                },
+                              );
+                            }).toList(),
+                          ),
                   ],
                 ),
               ),
