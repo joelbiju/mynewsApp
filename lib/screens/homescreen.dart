@@ -4,6 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:myapp/components/carousel.dart';
 import 'package:myapp/components/dummy_list.dart';
+import 'package:myapp/models/location_service.dart';
 import 'package:myapp/screens/create_news_screen.dart';
 import 'package:myapp/screens/profile_screen.dart';
 import 'package:myapp/util/colors.dart';
@@ -21,62 +22,16 @@ class _HomescreenState extends State<Homescreen> {
   @override
   void initState() {
     super.initState();
-    _getCurrentLocation();
+    _loadLocation();
   }
 
-  Future<void> _getCurrentLocation() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    // Check if location services are enabled
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      setState(() {
-        currentAddress = "Location services disabled.";
-      });
-      return;
-    }
-
-    // Request permission
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        setState(() {
-          currentAddress = "Permission denied.";
-        });
-        return;
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      setState(() {
-        currentAddress = "Permission permanently denied.";
-      });
-      return;
-    }
-
-    // Get current position
-    Position position = await Geolocator.getCurrentPosition(
-      locationSettings: LocationSettings(
-        accuracy: LocationAccuracy.high,
-      ),
-    );
-
-
-    // Reverse geocode to get the address
-    List<Placemark> placemarks = await placemarkFromCoordinates(
-      position.latitude,
-      position.longitude,
-    );
-
-    if (placemarks.isNotEmpty) {
-      Placemark place = placemarks[0];
-      setState(() {
-        currentAddress = place.locality ?? "Unknown location";
-      });
-    }
+  Future<void> _loadLocation() async {
+    String address = await LocationService.getCurrentAddress();
+    setState(() {
+      currentAddress = address;
+    });
   }
+
 
   @override
   Widget build(BuildContext context) {

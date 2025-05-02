@@ -2,17 +2,39 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:myapp/models/location_service.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
   @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  String currentAddress = 'Fetching location...';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLocation();
+  }
+
+  Future<void> _loadLocation() async {
+    String address = await LocationService.getCurrentAddress();
+    setState(() {
+      currentAddress = address;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // Get current user
     User? user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.of(context).pop(),
@@ -42,8 +64,6 @@ class ProfileScreen extends StatelessWidget {
                     }
 
                     var userData = snapshot.data!.data() as Map<String, dynamic>;
-
-                    // Mobile number from Firestore
                     String phoneNumber = userData['phone'] ?? 'Not Available';
 
                     return Column(
@@ -69,21 +89,19 @@ class ProfileScreen extends StatelessWidget {
                               ),
                               SizedBox(height: 10.h),
                               Text(
-                                user.displayName ?? 'No Name', // Name from Firebase
+                                user.displayName ?? 'No Name',
                                 style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
                               ),
                               Text(
-                                user.email ?? 'No Email', // Email from Firebase
+                                user.email ?? 'No Email',
                                 style: TextStyle(fontSize: 16.sp, color: Colors.grey),
                               ),
                               SizedBox(height: 8.h),
-
                               Divider(
                                 thickness: 1,
                                 color: Colors.grey,
                               ),
                               SizedBox(height: 16.h),
-
                               Row(
                                 children: [
                                   Column(
@@ -100,16 +118,15 @@ class ProfileScreen extends StatelessWidget {
                                     ],
                                   ),
                                   SizedBox(width: 15.w),
-
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        "New Delhi", // You can customize later if you store location
+                                        currentAddress,
                                         style: TextStyle(fontSize: 16.sp, color: Colors.grey),
                                       ),
                                       Text(
-                                        phoneNumber, // Mobile number from Firestore
+                                        phoneNumber,
                                         style: TextStyle(fontSize: 16.sp, color: Colors.grey),
                                       ),
                                     ],
