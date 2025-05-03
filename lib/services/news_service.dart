@@ -12,10 +12,15 @@ class NewsService {
     final String url =
         'https://api.worldnewsapi.com/search-news?api-key=$_apiKey&location-filter=$location&language=en&earliest-publish-date=$earliestDate';
 
-    final response = await http.get(Uri.parse(url));
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+      },
+    );
 
     if (response.statusCode == 200) {
-      final data = json.decode(response.body);
+      final data = json.decode(utf8.decode(response.bodyBytes));
       final newsResponse = NewsResponse.fromJson(data);
       return newsResponse.news;
     } else {

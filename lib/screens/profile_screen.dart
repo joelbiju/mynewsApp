@@ -32,9 +32,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     User? user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.grey[100],
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.of(context).pop(),
@@ -66,77 +66,144 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     var userData = snapshot.data!.data() as Map<String, dynamic>;
                     String phoneNumber = userData['phone'] ?? 'Not Available';
 
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 20.h),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(14),
-                            border: Border.all(
-                              color: Colors.grey,
-                              width: 1,
+                    return SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 20.h),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(
+                                color: Colors.grey,
+                                width: 1,
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                CircleAvatar(
+                                  radius: 24.w,
+                                  backgroundColor: Colors.grey[300],
+                                  child: Icon(
+                                    Icons.person_4_sharp,
+                                    color: Colors.black54,
+                                    size: 34.w,
+                                  ),
+                                ),
+                                SizedBox(height: 10.h),
+                                Text(
+                                  user.displayName ?? 'No Name',
+                                  style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  user.email ?? 'No Email',
+                                  style: TextStyle(fontSize: 16.sp, color: Colors.grey),
+                                ),
+                                SizedBox(height: 8.h),
+                                Divider(thickness: 1, color: Colors.grey),
+                                SizedBox(height: 16.h),
+                                Row(
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Location: ",
+                                          style: TextStyle(fontSize: 16.sp, color: Colors.black),
+                                        ),
+                                        Text(
+                                          "Phone: ",
+                                          style: TextStyle(fontSize: 16.sp, color: Colors.black),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(width: 15.w),
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          currentAddress,
+                                          style: TextStyle(fontSize: 16.sp, color: Colors.grey),
+                                        ),
+                                        Text(
+                                          phoneNumber,
+                                          style: TextStyle(fontSize: 16.sp, color: Colors.grey),
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ],
                             ),
                           ),
-                          child: Column(
-                            children: [
-                              CircleAvatar(
-                                radius: 35.w,
-                                backgroundImage: AssetImage('assets/Guy_1.png'),
-                              ),
-                              SizedBox(height: 10.h),
-                              Text(
-                                user.displayName ?? 'No Name',
+
+                          SizedBox(height: 20.h),
+
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 10.h),
+                              child: Text(
+                                "Your Contributions",
                                 style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
                               ),
-                              Text(
-                                user.email ?? 'No Email',
-                                style: TextStyle(fontSize: 16.sp, color: Colors.grey),
-                              ),
-                              SizedBox(height: 8.h),
-                              Divider(
-                                thickness: 1,
-                                color: Colors.grey,
-                              ),
-                              SizedBox(height: 16.h),
-                              Row(
-                                children: [
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Location: ",
-                                        style: TextStyle(fontSize: 16.sp, color: Colors.black),
-                                      ),
-                                      Text(
-                                        "Phone: ",
-                                        style: TextStyle(fontSize: 16.sp, color: Colors.black),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(width: 15.w),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        currentAddress,
-                                        style: TextStyle(fontSize: 16.sp, color: Colors.grey),
-                                      ),
-                                      Text(
-                                        phoneNumber,
-                                        style: TextStyle(fontSize: 16.sp, color: Colors.grey),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ],
+                            ),
                           ),
-                        )
-                      ],
+
+                          StreamBuilder<QuerySnapshot>(
+                            stream: FirebaseFirestore.instance
+                                .collection('news')
+                                .doc(user.displayName ?? user.uid)
+                                .collection('reports')
+                                .orderBy('createdAt', descending: true)
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return Center(child: CircularProgressIndicator());
+                              }
+
+                              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                                return Center(child: Padding(
+                                  padding: EdgeInsets.only(top: 30.h),
+                                  child: Text('No news submissions found.'),
+                                ));
+                              }
+
+                              final newsList = snapshot.data!.docs;
+
+                              return ListView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount: newsList.length,
+                                itemBuilder: (context, index) {
+                                  var news = newsList[index];
+                                  var data = news.data() as Map<String, dynamic>;
+
+                                  return Card(
+                                    color: Colors.white,
+                                    margin: EdgeInsets.symmetric(vertical: 8.h),
+                                    child: ListTile(
+                                      leading: data['mediaUrl'] != null
+                                          ? Image.asset(
+                                              data['mediaUrl'],
+                                              width: 50.w,
+                                              height: 50.h,
+                                              fit: BoxFit.cover,
+                                            )
+                                          : Icon(Icons.image_not_supported),
+                                      title: Text(data['title'] ?? 'No Title'),
+                                      subtitle: Text(data['description'] ?? 'No Description'),
+                                      trailing: Text(data['category'] ?? ''),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     );
                   },
                 ),

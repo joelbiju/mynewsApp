@@ -19,6 +19,7 @@ class NewsArticle {
   final String image;
   final String publishDate;
   final List<String> authors;
+  String? locationName;
 
   NewsArticle({
     required this.title,
@@ -27,6 +28,7 @@ class NewsArticle {
     required this.image,
     required this.publishDate,
     required this.authors,
+    this.locationName,
   });
 
   factory NewsArticle.fromJson(Map<String, dynamic> json) {
