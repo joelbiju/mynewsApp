@@ -7,6 +7,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:myapp/components/carousel.dart';
 import 'package:myapp/components/news_card.dart';
+import 'package:myapp/main.dart';
 import 'package:myapp/models/news_model.dart';
 import 'package:myapp/models/location_service.dart';
 import 'package:myapp/screens/create_news_screen.dart';
@@ -22,7 +23,7 @@ class Homescreen extends StatefulWidget {
   State<Homescreen> createState() => _HomescreenState();
 }
 
-class _HomescreenState extends State<Homescreen> {
+class _HomescreenState extends State<Homescreen> with RouteAware {
   String currentAddress = "Loading location...";
   List<NewsArticle> _newsList = [];
   List<NewsArticle> _carouselNews = [];
@@ -35,6 +36,31 @@ class _HomescreenState extends State<Homescreen> {
     super.initState();
     _loadLocationAndNews();
   }
+
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context)!);
+  }
+
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+
+  @override
+  void didPopNext() {
+    print("User returned to Homescreen – refreshing carousel...");
+    _loadLocationAndNews(); // Refresh your carousel here
+  }
+
+
+
+
 
   Future<void> _loadLocationAndNews() async {
     String address = await LocationService.getCurrentAddress();
@@ -206,15 +232,15 @@ class _HomescreenState extends State<Homescreen> {
                         Row(
                           children: [
                             Icon(
-                              Icons.location_on_outlined,
+                              Icons.location_pin,
                               color: UIColor.textPrimary,
-                              size: 22.w,
+                              size: 24.w,
                             ),
                             SizedBox(width: 5.w),
                             Text(
                               currentAddress,
                               style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 20.sp,
                                 fontWeight: FontWeight.w500,
                                 color: UIColor.textPrimary,
                               ),
@@ -246,9 +272,9 @@ class _HomescreenState extends State<Homescreen> {
                     ),
                     SizedBox(height: 6.h),
                     Text(
-                      "Headlines",
+                      "Local Headlines",
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 20.sp,
                         fontWeight: FontWeight.w500,
                         color: UIColor.textPrimary,
                       ),
@@ -289,9 +315,9 @@ class _HomescreenState extends State<Homescreen> {
                       thickness: 0.5,
                     ),
                     Text(
-                      "News in Detail",
+                      "News Headlines",
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 20.sp,
                         fontWeight: FontWeight.w500,
                         color: UIColor.textPrimary,
                       ),
