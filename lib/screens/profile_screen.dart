@@ -63,7 +63,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       return Center(child: Text('User data not found'));
                     }
 
-                    var userData = snapshot.data!.data() as Map<String, dynamic>;
+                    var userData =
+                        snapshot.data!.data() as Map<String, dynamic>;
                     String phoneNumber = userData['phone'] ?? 'Not Available';
 
                     return SingleChildScrollView(
@@ -72,7 +73,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         children: [
                           Container(
                             width: double.infinity,
-                            padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 20.h),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 15.w, vertical: 20.h),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(14),
@@ -95,11 +97,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 SizedBox(height: 10.h),
                                 Text(
                                   user.displayName ?? 'No Name',
-                                  style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      fontSize: 18.sp,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 Text(
                                   user.email ?? 'No Email',
-                                  style: TextStyle(fontSize: 16.sp, color: Colors.grey),
+                                  style: TextStyle(
+                                      fontSize: 16.sp, color: Colors.grey),
                                 ),
                                 SizedBox(height: 8.h),
                                 Divider(thickness: 1, color: Colors.grey),
@@ -107,29 +112,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 Row(
                                   children: [
                                     Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           "Location: ",
-                                          style: TextStyle(fontSize: 16.sp, color: Colors.black),
+                                          style: TextStyle(
+                                              fontSize: 16.sp,
+                                              color: Colors.black),
                                         ),
                                         Text(
                                           "Phone: ",
-                                          style: TextStyle(fontSize: 16.sp, color: Colors.black),
+                                          style: TextStyle(
+                                              fontSize: 16.sp,
+                                              color: Colors.black),
                                         ),
                                       ],
                                     ),
                                     SizedBox(width: 15.w),
                                     Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           currentAddress,
-                                          style: TextStyle(fontSize: 16.sp, color: Colors.grey),
+                                          style: TextStyle(
+                                              fontSize: 16.sp,
+                                              color: Colors.grey),
                                         ),
                                         Text(
                                           phoneNumber,
-                                          style: TextStyle(fontSize: 16.sp, color: Colors.grey),
+                                          style: TextStyle(
+                                              fontSize: 16.sp,
+                                              color: Colors.grey),
                                         ),
                                       ],
                                     )
@@ -138,20 +153,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ],
                             ),
                           ),
-
                           SizedBox(height: 20.h),
-
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Padding(
                               padding: EdgeInsets.symmetric(vertical: 10.h),
                               child: Text(
                                 "Your Contributions",
-                                style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    fontSize: 18.sp,
+                                    fontWeight: FontWeight.bold),
                               ),
                             ),
                           ),
-
                           StreamBuilder<QuerySnapshot>(
                             stream: FirebaseFirestore.instance
                                 .collection('news')
@@ -160,15 +174,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 .orderBy('createdAt', descending: true)
                                 .snapshots(),
                             builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                return Center(child: CircularProgressIndicator());
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Center(
+                                    child: CircularProgressIndicator());
                               }
 
-                              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                                return Center(child: Padding(
-                                  padding: EdgeInsets.only(top: 30.h),
-                                  child: Text('No news submissions found.'),
-                                ));
+                              if (!snapshot.hasData ||
+                                  snapshot.data!.docs.isEmpty) {
+                                return Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.only(top: 30.h),
+                                    child: Text('No news submissions found.'),
+                                  ),
+                                );
                               }
 
                               final newsList = snapshot.data!.docs;
@@ -179,11 +198,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 itemCount: newsList.length,
                                 itemBuilder: (context, index) {
                                   var news = newsList[index];
-                                  var data = news.data() as Map<String, dynamic>;
+                                  var data =
+                                      news.data() as Map<String, dynamic>;
 
                                   return Card(
                                     color: Colors.white,
-                                    margin: EdgeInsets.symmetric(vertical: 8.h),
+                                    margin:
+                                        EdgeInsets.symmetric(vertical: 8.h),
                                     child: ListTile(
                                       leading: data['mediaUrl'] != null
                                           ? Image.asset(
@@ -193,9 +214,73 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               fit: BoxFit.cover,
                                             )
                                           : Icon(Icons.image_not_supported),
-                                      title: Text(data['title'] ?? 'No Title'),
-                                      subtitle: Text(data['description'] ?? 'No Description'),
-                                      trailing: Text(data['category'] ?? ''),
+                                      title:
+                                          Text(data['title'] ?? 'No Title'),
+                                      subtitle: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(data['description'] ??
+                                              'No Description'),
+                                          SizedBox(height: 5.h),
+                                          Text(
+                                            data['category'] ?? '',
+                                            style:
+                                                TextStyle(color: Colors.grey),
+                                          ),
+                                        ],
+                                      ),
+                                      trailing: IconButton(
+                                        icon: Icon(Icons.delete,
+                                            color: Colors.red),
+                                        onPressed: () async {
+                                          bool confirmDelete =
+                                              await showDialog(
+                                            context: context,
+                                            builder: (context) => AlertDialog(
+                                              title:
+                                                  Text("Delete this report?"),
+                                              content: Text(
+                                                  "Are you sure you want to delete this news entry?"),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.of(context)
+                                                          .pop(false),
+                                                  child: Text("Cancel"),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.of(context)
+                                                          .pop(true),
+                                                  child: Text("Delete"),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+
+                                          if (confirmDelete) {
+                                            try {
+                                              await news.reference.delete();
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                      "News deleted successfully."),
+                                                ),
+                                              );
+                                            } catch (e) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                      "Failed to delete: $e"),
+                                                ),
+                                              );
+                                            }
+                                          }
+                                        },
+                                      ),
                                     ),
                                   );
                                 },

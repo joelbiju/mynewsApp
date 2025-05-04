@@ -79,7 +79,7 @@ class _HomescreenState extends State<Homescreen> with RouteAware {
     try {
       //String location = "9.225, 76.679,20"; // Replace with dynamic location if needed
       String location = "$latitude, $longitude, 20";
-      String date = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: 5)));
+      String date = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: 2)));
 
       final news = await NewsService.fetchNews(location: location, earliestDate: date);
       final nearbyCarouselNews = await CarouselService.fetchNearbyNews(latitude!, longitude!);
@@ -99,9 +99,6 @@ class _HomescreenState extends State<Homescreen> with RouteAware {
         article.locationName = "Unknown Location";
       }
     }
-
-
-
 
       setState(() {
         _newsList = news;
@@ -284,26 +281,42 @@ class _HomescreenState extends State<Homescreen> with RouteAware {
               ),
 
 
-              //carousals
-              _isLoading ? 
-                Center(child: CircularProgressIndicator(color: UIColor.primaryColor,))
-                : SimpleCarousel(
-                items: _carouselNews.map((article) {
-                  return CarouselItem(
-                    imageUrl: article.image,
-                    headline: article.title,
-                  );
-                }).toList(),
-                onTap: (item) {
-                  final tappedArticle = _carouselNews.firstWhere((a) => a.title == item.headline);
-                  _showNewsDetailsBottomSheet(
-                    tappedArticle.title,
-                    "${tappedArticle.publishDate}\n📍 ${tappedArticle.locationName ?? "Unknown"}",
-                    tappedArticle.text,
-                    tappedArticle.image,
-                  );
-                },
-              ),
+              // Carousel section with fallback
+              _isLoading
+                ? Center(child: CircularProgressIndicator(color: UIColor.primaryColor))
+                : _carouselNews.isEmpty
+                    ? Padding(
+                        padding: EdgeInsets.symmetric(vertical: 20.h),
+                        child: Center(
+                          child: Text(
+                            "No local news available.",
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                              color: Colors.black54,
+                            ),
+                          ),
+                        ),
+                      )
+                    : SimpleCarousel(
+                        items: _carouselNews.map((article) {
+                          return CarouselItem(
+                            imageUrl: article.image,
+                            headline: article.title,
+                          );
+                        }).toList(),
+                        onTap: (item) {
+                          final tappedArticle = _carouselNews.firstWhere(
+                            (a) => a.title == item.headline,
+                            orElse: () => _carouselNews.first, // safe fallback
+                          );
+                          _showNewsDetailsBottomSheet(
+                            tappedArticle.title,
+                            "${tappedArticle.publishDate}\n📍 ${tappedArticle.locationName ?? "Unknown"}",
+                            tappedArticle.text,
+                            tappedArticle.image,
+                          );
+                        },
+                      ),
 
 
               SizedBox(height: 20.h),
