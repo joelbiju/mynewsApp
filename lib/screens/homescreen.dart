@@ -79,7 +79,7 @@ class _HomescreenState extends State<Homescreen> with RouteAware {
     try {
       //String location = "9.225, 76.679,20"; // Replace with dynamic location if needed
       String location = "$latitude, $longitude, 20";
-      String date = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: 7)));
+      String date = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: 5)));
 
       final news = await NewsService.fetchNews(location: location, earliestDate: date);
       final nearbyCarouselNews = await CarouselService.fetchNearbyNews(latitude!, longitude!);
@@ -285,7 +285,9 @@ class _HomescreenState extends State<Homescreen> with RouteAware {
 
 
               //carousals
-              SimpleCarousel(
+              _isLoading ? 
+                Center(child: CircularProgressIndicator(color: UIColor.primaryColor,))
+                : SimpleCarousel(
                 items: _carouselNews.map((article) {
                   return CarouselItem(
                     imageUrl: article.image,
@@ -324,7 +326,7 @@ class _HomescreenState extends State<Homescreen> with RouteAware {
                     ),
                     SizedBox(height: 6.h),
                     _isLoading
-                        ? Center(child: CircularProgressIndicator())
+                        ? Center(child: CircularProgressIndicator(color: UIColor.primaryColor,))
                         : Column(
                             children: _newsList.map((article) {
                               return NewsCard(
